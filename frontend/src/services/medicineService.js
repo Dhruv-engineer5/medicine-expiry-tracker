@@ -1,6 +1,7 @@
 import axios from "axios";
 
-const API_URL = "http://localhost:5000/api/medicines";
+const API_URL =
+  "https://medicine-expiry-tracker-1.onrender.com/api/medicines";
 
 // Get all medicines
 export const getMedicines = async () => {
