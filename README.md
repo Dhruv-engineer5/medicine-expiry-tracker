@@ -1,53 +1,61 @@
-# Medicine Expiry Tracker
+# 💊 Medicine Expiry Tracker
 
-A full-stack web application designed to help users manage their medicines, track quantities and expiry dates, and quickly identify medicines that are expired, expiring soon, or safe to use.
+A full-stack, multi-user web application designed to help users securely manage their medicines, track quantities and expiry dates, and quickly identify medicines that are expired, expiring soon, or safe.
 
----
+## 🌐 Live Demo
 
-## 🌐 Live Website
-
-**Live Demo:**  
-https://medicine-expiry-tracker-o8bfmqph0-dhruv-b425.vercel.app/
+👉 **[Open Live Website](https://medicine-expiry-tracker-zeta.vercel.app/)**
 
 ## 💻 GitHub Repository
 
-**Repository:**  
-https://github.com/Dhruv-engineer5/medicine-expiry-tracker
+👉 **[View Source Code](https://github.com/Dhruv-engineer5/medicine-expiry-tracker)**
+
+## ⚙️ Backend API
+
+👉 **[Open Backend](https://medicine-expiry-tracker-1.onrender.com)**
 
 ---
 
 ## 📸 Screenshots
 
-### Dashboard
+### 🔐 Login / Register
 
-The dashboard provides a complete overview of the medicine inventory, including total medicines, expired medicines, medicines expiring soon, safe medicines, quick statistics, and the most urgent medicines.
+Users can create an account and securely log in before accessing their personal medicine dashboard.
+
+![Login and Register](screenshots/login-register.png)
+
+### 📊 Dashboard
+
+The dashboard provides an overview of the logged-in user's medicines, including total medicines, expired medicines, expiring soon medicines, safe medicines, quick statistics, and urgent medicines.
 
 ![Medicine Expiry Tracker Dashboard](screenshots/dashboard.png)
 
----
+### 💊 Medicine List
 
-### Medicine List
-
-The medicine list allows users to search and filter medicines while viewing their expiry date, quantity, current expiry status, remaining days, and available actions.
+Users can search and filter their own medicines while viewing expiry dates, quantities, current status, remaining days, and available actions.
 
 ![Medicine List](screenshots/medicine-list.png)
 
----
+### ➕ Add / Edit Medicine
 
-### Add / Edit Medicine
+Users can add or update medicine information by entering the medicine name, expiry date, and quantity.
 
-Users can add or edit medicine information by entering the medicine name, expiry date, and quantity.
-
-![Add Medicine](screenshots/add-edit-medicine.png)
+![Add or Edit Medicine](screenshots/add-edit-medicine.png)
 
 ---
 
 ## ✨ Features
 
+- User registration
+- User login and logout
+- JWT-based authentication
+- Protected medicine APIs
+- User-specific private medicines
+- Secure password hashing with bcrypt
 - Add medicines
-- Edit existing medicines
+- Edit medicines
 - Delete medicines
-- Track medicine quantity
+- Track medicine quantities
 - Track medicine expiry dates
 - Automatic expiry status calculation
 - Expired medicine detection
@@ -62,268 +70,25 @@ Users can add or edit medicine information by entering the medicine name, expiry
 - MongoDB data persistence
 - REST API integration
 - Full CRUD functionality
+- Multi-user data isolation
 
 ---
 
-## 📅 Expiry Status Rules
+## 🔐 Authentication & Privacy
 
-The application automatically calculates the current medicine status based on the expiry date.
+The application uses authentication so each user can access only their own medicine records.
 
-| Status | Condition | Description |
-|--------|-----------|-------------|
-| 🔴 **Expired** | Expiry date has passed | Medicine has already expired |
-| 🟡 **Expiring Soon** | 30 days or less remaining | Medicine is approaching its expiry date |
-| 🟢 **Safe** | More than 30 days remaining | Medicine is currently within a safe expiry period |
+### Authentication Flow
 
-The application also calculates the exact number of days remaining for each medicine.
-
----
-
-## 🛠️ Tech Stack
-
-### Frontend
-
-- React
-- Vite
-- Axios
-- CSS
-
-### Backend
-
-- Node.js
-- Express.js
-- MongoDB
-- Mongoose
-
-### Tools & Deployment
-
-- Git
-- GitHub
-- Vercel
-- Render
-- MongoDB Atlas
-
----
-
-## 🏗️ Architecture
-
-The project follows a full-stack client-server architecture.
-                    ┌──────────────────────┐
-                    │      React + Vite    │
-                    │       Frontend       │
-                    │                      │
-                    │  Dashboard           │
-                    │  Medicine List       │
-                    │  Add / Edit Medicine │
-                    │  Search & Filter      │
-                    └──────────┬───────────┘
-                               │
-                               │ Axios / REST API
-                               ▼
-                    ┌──────────────────────┐
-                    │   Node.js + Express  │
-                    │       Backend        │
-                    │                      │
-                    │  Routes              │
-                    │  Controllers         │
-                    │  Models              │
-                    │  Database Config     │
-                    └──────────┬───────────┘
-                               │
-                               │ Mongoose
-                               ▼
-                    ┌──────────────────────┐
-                    │    MongoDB Atlas     │
-                    │   Persistent Data    │
-                    └──────────────────────┘
- 
-
-📂 Project Structure:
-medicine-expiry-tracker/
-│
-├── backend/
-│   ├── config/
-│   │   └── db.js
-│   │
-│   ├── controllers/
-│   │   └── medicineController.js
-│   │
-│   ├── middleware/
-│   │
-│   ├── models/
-│   │   └── Medicine.js
-│   │
-│   ├── routes/
-│   │   └── medicineRoutes.js
-│   │
-│   ├── package.json
-│   └── server.js
-│
-├── frontend/
-│   ├── src/
-│   │   ├── components/
-│   │   │   ├── Dashboard.jsx
-│   │   │   ├── MedicineCard.jsx
-│   │   │   ├── MedicineForm.jsx
-│   │   │   ├── MedicineList.jsx
-│   │   │   └── StatusBadge.jsx
-│   │   │
-│   │   ├── pages/
-│   │   │
-│   │   ├── services/
-│   │   │   └── medicineService.js
-│   │   │
-│   │   ├── App.jsx
-│   │   ├── main.jsx
-│   │   └── index.css
-│   │
-│   ├── package.json
-│   └── index.html
-│
-├── screenshots/
-│   ├── dashboard.png
-│   ├── medicine-list.png
-│   └── add-edit-medicine.png
-│
-├── .gitignore
-└── README.md
-
-
-🔌 API Endpoints
-The backend provides RESTful API endpoints for complete medicine management.
-| Method   | Endpoint             | Description                 |
-| -------- | -------------------- | --------------------------- |
-| `GET`    | `/api/medicines`     | Get all medicines           |
-| `GET`    | `/api/medicines/:id` | Get a single medicine       |
-| `POST`   | `/api/medicines`     | Add a new medicine          |
-| `PUT`    | `/api/medicines/:id` | Update an existing medicine |
-| `DELETE` | `/api/medicines/:id` | Delete a medicine           |
-
-
-API Flow:
-Frontend
-   │
-   │ Axios Request
-   ▼
-Express REST API
-   │
-   │ Mongoose
-   ▼
-MongoDB Atlas
-
-🚀 Local Installation
-Prerequisites
-Make sure the following are installed on your system:
-Node.js
-npm
-Git
-MongoDB Atlas account
-1. Clone the Repository:
-git clone https://github.com/Dhruv-engineer5/medicine-expiry-tracker.git
-Move into the project directory:
-cd medicine-expiry-tracker
-
-2. Backend Setup
-Navigate to the backend folder:
-cd backend
-Install backend dependencies:
-npm install
-Create a local .env file inside the backend directory.
-Example:
-PORT=5000
-MONGODB_URI=your_mongodb_atlas_connection_string
-Start the backend server:
-npm start
-The backend will run on:
-http://localhost:5000
-
-3. Frontend Setup
-Open a new terminal and navigate to the frontend directory:
-cd frontend
-Install frontend dependencies:
-npm install
-Create a local .env file inside the frontend directory.
-Example:
-VITE_API_URL=http://localhost:5000/api
-Start the frontend development server:
-npm run dev
-The application will normally be available at:
-http://localhost:5173
-
-🔐 Environment Variables
-Backend Environment Variables
-PORT=5000
-MONGODB_URI=your_mongodb_atlas_connection_string
-Frontend Environment Variables
-VITE_API_URL=http://localhost:5000/api
-For production deployment, configure these variables directly in the Vercel and Render dashboards.
-
-☁️ Deployment
-Frontend Deployment — Vercel
-The frontend is deployed using Vercel.
-GitHub
-   │
-   ▼
-Vercel
-   │
-   ▼
-React + Vite Frontend
-Configure the production API URL in Vercel:
-VITE_API_URL=https://your-backend-url/api
-The live frontend is available at:
-https://medicine-expiry-tracker-o8bfmqph0-dhruv-b425.vercel.app/
-
-Backend Deployment — Render
-The Node.js and Express backend can be deployed through Render.
-GitHub
-   │
-   ▼
-Render
-   │
-   ▼
-Node.js + Express API
-   │
-   ▼
-MongoDB Atlas
-Configure the backend environment variables in Render:
-PORT=5000
-MONGODB_URI=your_mongodb_atlas_connection_string
-
-Database — MongoDB Atlas
-MongoDB Atlas is used as the cloud database for persistent medicine data.
-The backend connects to MongoDB Atlas using Mongoose and the MONGODB_URI environment variable.
-
-🔮 Future Improvements
-Possible future enhancements include:
-*User authentication and authorization
-*Multiple user accounts
-*Medicine categories
-*Manufacturer and dosage information
-*Low-stock alerts
-*Email notifications
-*Push notifications for upcoming expiry dates
-*Advanced medicine sorting
-*Bulk import and export
-*Data visualization and analytics
-*Pagination for large datasets
-*Automated testing
-*GitHub Actions CI/CD
-*Improved accessibility
-*Dark mode support
-
-👨‍💻 Author
-Dhruv a Ghodasaras
-GitHub:
-https://github.com/Dhruv-engineer5
-
-engineer5
-
-📄 License:
-This project currently does not include an open-source license.
-To make the project officially open source, add an appropriate LICENSE file to the repository, such as the MIT License.
-
-🌐 Project Links
-Live Website:
-https://medicine-expiry-tracker-o8bfmqph0-dhruv-b425.vercel.app/
-GitHub Repository:
-https://github.com/Dhruv-engineer5/medicine-expiry-tracker
+```text
+Register
+   ↓
+User Account Created
+   ↓
+Login
+   ↓
+JWT Token
+   ↓
+Protected API Requests
+   ↓
+Only Logged-in User's Medicines
