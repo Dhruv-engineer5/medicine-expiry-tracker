@@ -21,7 +21,10 @@ app.get("/", (req, res) => {
   });
 });
 
+// Authentication routes
 app.use("/api/auth", authRoutes);
+
+// Medicine routes
 app.use("/api/medicines", medicineRoutes);
 
 app.use((req, res) => {
