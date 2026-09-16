@@ -1,15 +1,14 @@
 const Medicine = require("../models/Medicine");
 
-// Calculate medicine status
 const getMedicineStatus = (expiryDate) => {
   const today = new Date();
   const expiry = new Date(expiryDate);
 
-  // Remove time portion
   today.setHours(0, 0, 0, 0);
   expiry.setHours(0, 0, 0, 0);
 
-  const differenceInTime = expiry.getTime() - today.getTime();
+  const differenceInTime =
+    expiry.getTime() - today.getTime();
 
   const differenceInDays = Math.ceil(
     differenceInTime / (1000 * 60 * 60 * 24)
@@ -26,10 +25,12 @@ const getMedicineStatus = (expiryDate) => {
   return "Safe";
 };
 
-// Get all medicines
+// Get user's medicines
 const getMedicines = async (req, res) => {
   try {
-    const medicines = await Medicine.find().sort({
+    const medicines = await Medicine.find({
+      user: req.user.id,
+    }).sort({
       expiryDate: 1,
     });
 
@@ -52,10 +53,13 @@ const getMedicines = async (req, res) => {
   }
 };
 
-// Get single medicine
+// Get one user's medicine
 const getMedicineById = async (req, res) => {
   try {
-    const medicine = await Medicine.findById(req.params.id);
+    const medicine = await Medicine.findOne({
+      _id: req.params.id,
+      user: req.user.id,
+    });
 
     if (!medicine) {
       return res.status(404).json({
@@ -64,14 +68,12 @@ const getMedicineById = async (req, res) => {
       });
     }
 
-    const medicineWithStatus = {
-      ...medicine.toObject(),
-      status: getMedicineStatus(medicine.expiryDate),
-    };
-
     res.status(200).json({
       success: true,
-      data: medicineWithStatus,
+      data: {
+        ...medicine.toObject(),
+        status: getMedicineStatus(medicine.expiryDate),
+      },
     });
   } catch (error) {
     res.status(500).json({
@@ -82,7 +84,7 @@ const getMedicineById = async (req, res) => {
   }
 };
 
-// Create medicine
+// Create medicine for logged-in user
 const createMedicine = async (req, res) => {
   try {
     const { name, expiryDate, quantity } = req.body;
@@ -90,7 +92,8 @@ const createMedicine = async (req, res) => {
     if (!name || !expiryDate || quantity === undefined) {
       return res.status(400).json({
         success: false,
-        message: "Name, expiry date and quantity are required",
+        message:
+          "Name, expiry date and quantity are required",
       });
     }
 
@@ -98,17 +101,16 @@ const createMedicine = async (req, res) => {
       name,
       expiryDate,
       quantity,
+      user: req.user.id,
     });
-
-    const medicineWithStatus = {
-      ...medicine.toObject(),
-      status: getMedicineStatus(medicine.expiryDate),
-    };
 
     res.status(201).json({
       success: true,
       message: "Medicine added successfully",
-      data: medicineWithStatus,
+      data: {
+        ...medicine.toObject(),
+        status: getMedicineStatus(medicine.expiryDate),
+      },
     });
   } catch (error) {
     res.status(500).json({
@@ -119,11 +121,14 @@ const createMedicine = async (req, res) => {
   }
 };
 
-// Update medicine
+// Update only user's medicine
 const updateMedicine = async (req, res) => {
   try {
-    const medicine = await Medicine.findByIdAndUpdate(
-      req.params.id,
+    const medicine = await Medicine.findOneAndUpdate(
+      {
+        _id: req.params.id,
+        user: req.user.id,
+      },
       req.body,
       {
         new: true,
@@ -138,15 +143,13 @@ const updateMedicine = async (req, res) => {
       });
     }
 
-    const medicineWithStatus = {
-      ...medicine.toObject(),
-      status: getMedicineStatus(medicine.expiryDate),
-    };
-
     res.status(200).json({
       success: true,
       message: "Medicine updated successfully",
-      data: medicineWithStatus,
+      data: {
+        ...medicine.toObject(),
+        status: getMedicineStatus(medicine.expiryDate),
+      },
     });
   } catch (error) {
     res.status(500).json({
@@ -157,10 +160,13 @@ const updateMedicine = async (req, res) => {
   }
 };
 
-// Delete medicine
+// Delete only user's medicine
 const deleteMedicine = async (req, res) => {
   try {
-    const medicine = await Medicine.findByIdAndDelete(req.params.id);
+    const medicine = await Medicine.findOneAndDelete({
+      _id: req.params.id,
+      user: req.user.id,
+    });
 
     if (!medicine) {
       return res.status(404).json({

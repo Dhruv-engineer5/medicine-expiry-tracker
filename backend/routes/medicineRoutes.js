@@ -8,7 +8,12 @@ const {
   deleteMedicine,
 } = require("../controllers/medicineController");
 
+const protect = require("../middleware/authMiddleware");
+
 const router = express.Router();
+
+// All medicine routes require login
+router.use(protect);
 
 router.get("/", getMedicines);
 router.get("/:id", getMedicineById);

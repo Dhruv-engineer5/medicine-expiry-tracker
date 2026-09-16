@@ -3,7 +3,9 @@ const cors = require("cors");
 require("dotenv").config();
 
 const connectDB = require("./config/db");
+
 const medicineRoutes = require("./routes/medicineRoutes");
+const authRoutes = require("./routes/authRoutes");
 
 const app = express();
 
@@ -19,14 +21,17 @@ app.get("/", (req, res) => {
   });
 });
 
-// Medicine routes
+app.use("/api/auth", authRoutes);
 app.use("/api/medicines", medicineRoutes);
 
-const PORT = process.env.PORT || 5000;
-
-app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
+app.use((req, res) => {
+  res.status(404).json({
+    success: false,
+    message: "Route not found",
+  });
 });
+
+const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, "0.0.0.0", () => {
   console.log(`Server running on port ${PORT}`);

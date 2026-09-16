@@ -4,6 +4,9 @@ import Dashboard from "./components/Dashboard";
 import MedicineForm from "./components/MedicineForm";
 import MedicineList from "./components/MedicineList";
 
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+
 import {
   addMedicine,
   deleteMedicine,
@@ -12,12 +15,34 @@ import {
 } from "./services/medicineService";
 
 function App() {
+  const [user, setUser] = useState(null);
+  const [authPage, setAuthPage] = useState("login");
+
   const [medicines, setMedicines] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [editingMedicine, setEditingMedicine] = useState(null);
+
+  const [editingMedicine, setEditingMedicine] =
+    useState(null);
+
   const [searchTerm, setSearchTerm] = useState("");
-  const [filterStatus, setFilterStatus] = useState("All");
+  const [filterStatus, setFilterStatus] =
+    useState("All");
+
+  useEffect(() => {
+    const savedUser = localStorage.getItem("user");
+    const token = localStorage.getItem("token");
+
+    if (savedUser && token) {
+      setUser(JSON.parse(savedUser));
+    }
+  }, []);
+
+  useEffect(() => {
+    if (user) {
+      fetchMedicines();
+    }
+  }, [user]);
 
   const fetchMedicines = async () => {
     try {
@@ -30,17 +55,35 @@ function App() {
     } catch (error) {
       console.error(error);
 
+      if (error.response?.status === 401) {
+        handleLogout();
+        return;
+      }
+
       setError(
-        "Unable to load medicines. Please check the backend server."
+        "Unable to load medicines."
       );
     } finally {
       setLoading(false);
     }
   };
 
-  useEffect(() => {
-    fetchMedicines();
-  }, []);
+  const handleLogin = (loggedInUser) => {
+    setUser(loggedInUser);
+  };
+
+  const handleRegister = (registeredUser) => {
+    setUser(registeredUser);
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+
+    setUser(null);
+    setMedicines([]);
+    setEditingMedicine(null);
+  };
 
   const handleSubmit = async (medicineData) => {
     try {
@@ -62,7 +105,9 @@ function App() {
 
         setEditingMedicine(null);
       } else {
-        const response = await addMedicine(medicineData);
+        const response = await addMedicine(
+          medicineData
+        );
 
         setMedicines((previous) => [
           response.data,
@@ -71,6 +116,11 @@ function App() {
       }
     } catch (error) {
       console.error(error);
+
+      if (error.response?.status === 401) {
+        handleLogout();
+        return;
+      }
 
       setError("Unable to save medicine.");
     }
@@ -91,10 +141,17 @@ function App() {
       await deleteMedicine(id);
 
       setMedicines((previous) =>
-        previous.filter((medicine) => medicine._id !== id)
+        previous.filter(
+          (medicine) => medicine._id !== id
+        )
       );
     } catch (error) {
       console.error(error);
+
+      if (error.response?.status === 401) {
+        handleLogout();
+        return;
+      }
 
       setError("Unable to delete medicine.");
     }
@@ -119,16 +176,56 @@ function App() {
         filterStatus === "All" ||
         medicine.status === filterStatus;
 
-      return matchesSearch && matchesStatus;
+      return (
+        matchesSearch && matchesStatus
+      );
     });
-  }, [medicines, searchTerm, filterStatus]);
+  }, [
+    medicines,
+    searchTerm,
+    filterStatus,
+  ]);
+
+  if (!user) {
+    if (authPage === "register") {
+      return (
+        <Register
+          onRegister={handleRegister}
+          onShowLogin={() =>
+            setAuthPage("login")
+          }
+        />
+      );
+    }
+
+    return (
+      <Login
+        onLogin={handleLogin}
+        onShowRegister={() =>
+          setAuthPage("register")
+        }
+      />
+    );
+  }
 
   return (
     <div className="app">
       <header className="app-header">
-        <div>
-          <p className="app-subtitle">Home Medicine Manager</p>
-          <h1>Medicine Expiry Tracker</h1>
+        <div className="header-content">
+          <div>
+            <p className="app-subtitle">
+              Welcome, {user.name}
+            </p>
+
+            <h1>Medicine Expiry Tracker</h1>
+          </div>
+
+          <button
+            className="logout-btn"
+            onClick={handleLogout}
+          >
+            Logout
+          </button>
         </div>
       </header>
 
@@ -144,7 +241,9 @@ function App() {
         <MedicineForm
           onSubmit={handleSubmit}
           editingMedicine={editingMedicine}
-          onCancel={() => setEditingMedicine(null)}
+          onCancel={() =>
+            setEditingMedicine(null)
+          }
         />
 
         <section className="medicine-section">
@@ -152,7 +251,7 @@ function App() {
             <div>
               <h2>My Medicines</h2>
               <p>
-                Track your medicines and expiry dates.
+                Only your medicines are shown here.
               </p>
             </div>
 
@@ -173,11 +272,15 @@ function App() {
                 }
               >
                 <option value="All">All</option>
-                <option value="Expired">Expired</option>
+                <option value="Expired">
+                  Expired
+                </option>
                 <option value="Expiring Soon">
                   Expiring Soon
                 </option>
-                <option value="Safe">Safe</option>
+                <option value="Safe">
+                  Safe
+                </option>
               </select>
             </div>
           </div>

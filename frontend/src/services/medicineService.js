@@ -3,32 +3,62 @@ import axios from "axios";
 const API_URL =
   "https://medicine-expiry-tracker-1.onrender.com/api/medicines";
 
-// Get all medicines
+const getAuthHeaders = () => {
+  const token = localStorage.getItem("token");
+
+  return {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  };
+};
+
 export const getMedicines = async () => {
-  const response = await axios.get(API_URL);
+  const response = await axios.get(
+    API_URL,
+    getAuthHeaders()
+  );
+
   return response.data;
 };
 
-// Get single medicine
 export const getMedicineById = async (id) => {
-  const response = await axios.get(`${API_URL}/${id}`);
+  const response = await axios.get(
+    `${API_URL}/${id}`,
+    getAuthHeaders()
+  );
+
   return response.data;
 };
 
-// Add medicine
 export const addMedicine = async (medicineData) => {
-  const response = await axios.post(API_URL, medicineData);
+  const response = await axios.post(
+    API_URL,
+    medicineData,
+    getAuthHeaders()
+  );
+
   return response.data;
 };
 
-// Update medicine
-export const updateMedicine = async (id, medicineData) => {
-  const response = await axios.put(`${API_URL}/${id}`, medicineData);
+export const updateMedicine = async (
+  id,
+  medicineData
+) => {
+  const response = await axios.put(
+    `${API_URL}/${id}`,
+    medicineData,
+    getAuthHeaders()
+  );
+
   return response.data;
 };
 
-// Delete medicine
 export const deleteMedicine = async (id) => {
-  const response = await axios.delete(`${API_URL}/${id}`);
+  const response = await axios.delete(
+    `${API_URL}/${id}`,
+    getAuthHeaders()
+  );
+
   return response.data;
 };
